@@ -1,3 +1,16 @@
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalLabel">Error</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="errorModalBody">
+      </div>
+    </div>
+  </div>
+</div>
+
 <script nonce="{{@csp_nonce}}" src="https://cdn.jsdelivr.net/npm/@univerjs/umd@0.2.6/lib/univer.full.umd.js"></script>
 <script nonce="{{@csp_nonce}}" src="https://cdn.jsdelivr.net/npm/@univerjs/umd@0.2.6/lib/locale/en-US.js"></script>
 <style>
@@ -20,18 +33,25 @@
  
 <script nonce="{{@csp_nonce}}">
     {{#if update_link}}
-      // Send a POST request with form data x, y, and value to the update_link
-      function onUpdate(x, y, value, custom) {
-        const url = {{{stringify update_link}}};
+      async function onUpdate(x, y, value, custom) {
+        const relative_url = {{{stringify update_link}}};
+        const url = new URL(relative_url, window.location.href);
+        url.searchParams.append('_sqlpage_embed', 1);
         const formData = new URLSearchParams();
         formData.append("x", x);
         formData.append("y", y);
         if (value != null) formData.append("value", value);
         if (custom && custom.id !== null) formData.append("id", custom.id);
-        fetch(url, {
+        const r = await fetch(url, {
           method: "POST",
           body: formData,
         });
+        let resp_html = await r.text();
+        if (r.status !== 200 && !resp_html) resp_html = resp.statusText;
+        if (resp_html) {
+          document.getElementById('errorModalBody').innerHTML = resp_html;
+          new bootstrap.Modal(document.getElementById('errorModal')).show();
+        }
       }
     {{else}}
       function onUpdate(x, y, value) {}
@@ -97,7 +117,7 @@
 ]
 ">
 
-  const tblrColors = Object.fromEntries(['azure', 'red', 'lime', 'purple', 'yellow', 'blue', 'gray-600', 'orange', 'black', 'pink', 'teal', 'indigo', 'cyan', 'green', 'cyan']
+  const tblrColors = Object.fromEntries(['azure', 'red', 'lime', 'purple', 'yellow', 'blue', 'gray-600', 'orange', 'black', 'pink', 'teal', 'indigo', 'cyan', 'green']
       .map(c => [c, getComputedStyle(document.documentElement).getPropertyValue('--tblr-' + c)]));
 
   const data_txt = document.currentScript.dataset.cells;
