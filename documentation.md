@@ -6,6 +6,8 @@ It has the ability to edit cell data by posting their contents to another SQLpag
 ## Top-level properties
 
 - **update\_link**:  the name of another sql file, to which cell contents will be posted on update. The sql file will receive the variables :x and :y (position of the cell that was updated), :value (the new textual contents of the cell) and :id if an id was assigned to the cell from the row-level properties.
+- **freeze\_x**: the number of columns to freeze on the left side
+- **freeze\_y**: the number of rows to freeze on the top side
 
 ## Row-Level properties
 

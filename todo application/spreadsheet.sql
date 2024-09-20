@@ -2,7 +2,9 @@ select 'shell' as component, 'spreadsheet' as title, 'fluid' as layout;
 
 select 'title' as component, 'Here is my spreadsheet' as contents;
 
-select 'spreadsheet' as component, 'spreadsheet_update.sql' as update_link;
+select 'spreadsheet' as component,
+  'spreadsheet_update.sql' as update_link,
+  1 as freeze_y;
 
 select 
   row_number() over (order by created_at) as x,

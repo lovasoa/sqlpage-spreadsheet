@@ -96,6 +96,8 @@
     univer.registerPlugin(UniverSheetsUi.UniverSheetsUIPlugin);
     univer.registerPlugin(UniverSheetsNumfmt.UniverSheetsNumfmtPlugin);
     univer.registerPlugin(UniverSheetsFormula.UniverSheetsFormulaPlugin);
+
+    const univerAPI = UniverFacade.FUniver.newAPI(univer);
 </script>
 <script nonce="{{@csp_nonce}}" data-cells="
 [
@@ -177,10 +179,23 @@
       "sqlpage":generateWorkSheet(data)
     },
   }
-  univer.createUnit(UniverCore.UniverInstanceType.UNIVER_SHEET, workbook);
+  const unit = univer.createUnit(UniverCore.UniverInstanceType.UNIVER_SHEET, workbook);
 
-  const univerAPI = UniverFacade.FUniver.newAPI(univer);
   const activeSheet = univerAPI.getActiveWorkbook().getActiveSheet();
+
+  const freeze_x = {{stringify (default freeze_x 0)}};
+  const freeze_y = {{stringify (default freeze_y 0)}};
+
+  if (freeze_x || freeze_y) {
+    univerAPI.executeCommand('sheet.mutation.set-frozen', {
+      unitId: unit.getUnitId(),
+      subUnitId: activeSheet.getSheetId(),
+      startRow: freeze_y,
+      startColumn: freeze_x,
+      xSplit: freeze_x,
+      ySplit: freeze_y
+    });
+  }
 
   univerAPI.onCommandExecuted(({id, params}) => {
       if (id === "sheet.mutation.set-range-values") {
