@@ -17,6 +17,7 @@ import type {
 } from "@univerjs/sheets";
 
 const univer_core = import("@univerjs/core");
+const design = import("@univerjs/design");
 const render_engine = import("@univerjs/engine-render");
 const ui_plugin = import("@univerjs/ui");
 const sheets_plugin = import("@univerjs/sheets");
@@ -25,28 +26,25 @@ const engine_formula = import("@univerjs/engine-formula");
 const sheets_numfmt = import("@univerjs/sheets-numfmt");
 const sheets_formula = import("@univerjs/sheets-formula");
 const facade = import("@univerjs/facade");
+const zod = import("zod");
 
-import { z } from "zod";
-
-const PropsSchema = z.object({
-	update_link: z.string().url(),
-	freeze_x: z.number().int().nonnegative(),
-	freeze_y: z.number().int().nonnegative(),
-	component_index: z.number().int().nonnegative(),
-});
-
-type Props = z.infer<typeof PropsSchema>;
+const DesignEnUS = import('node_modules/@univerjs/design/lib/locale/en-US.json');
+const SheetsEnUS = import('node_modules/@univerjs/sheets/lib/locale/en-US.json');
+const SheetsUIEnUS = import('node_modules/@univerjs/sheets-ui/lib/locale/en-US.json');
+const SheetsFormulaEnUS = import('node_modules/@univerjs/sheets-formula/lib/locale/en-US.json');
+const UIEnUS = import('node_modules/@univerjs/ui/lib/locale/en-US.json');
 
 const NUMBER_CELL_TYPE: typeof CellValueType.NUMBER = 2;
 const UNIVER_SHEET_TYPE: typeof UniverInstanceType.UNIVER_SHEET = 2;
 
-function generateWorkSheet(dataArray: any[]): Partial<IWorksheetData> {
+function generateWorkSheet(dataArray: any[], z: Zod): Partial<IWorksheetData> {
 	const cellData: IObjectMatrixPrimitiveType<ICellData> = {};
 	let rowCount = 1000;
 	let columnCount = 26;
+	const schema = DataArraySchema(z);
 
 	for (const elem of dataArray) {
-		const [colIdx, rowIdx, value, ...props] = DataArraySchema.parse(elem);
+		const [colIdx, rowIdx, value, ...props] = schema.parse(elem);
 		const cell: ICellData = { v: value };
 		const style = props.length ? cellFromProps(props) : null;
 		cell.s = style;
@@ -68,17 +66,26 @@ function generateWorkSheet(dataArray: any[]): Partial<IWorksheetData> {
 	};
 }
 
-async function setupUniver(component_index: number) {
-	const { Univer } = await univer_core;
+async function setupUniver(container: HTMLElement) {
+	const { Univer, LocaleType, Tools } = await univer_core;
+	const { defaultTheme } = await design;
 
 	const univer = new Univer({
+		theme: defaultTheme,
 		logLevel: 3,
+		locales: {
+			[LocaleType.EN_US]: Tools.deepMerge(
+			  await DesignEnUS,
+			  await SheetsEnUS,
+			  await SheetsUIEnUS,
+			  await SheetsFormulaEnUS,
+			  await UIEnUS
+			),
+		},
 	});
 
 	univer.registerPlugin((await render_engine).UniverRenderEnginePlugin);
-	univer.registerPlugin((await ui_plugin).UniverUIPlugin, {
-		container: `_sqlpage_spreadsheet_univer_${component_index}`,
-	});
+	univer.registerPlugin((await ui_plugin).UniverUIPlugin, { container });
 	univer.registerPlugin((await sheets_plugin).UniverSheetsPlugin);
 	univer.registerPlugin((await sheets_ui_plugin).UniverSheetsUIPlugin);
 
@@ -91,12 +98,11 @@ async function loadOptionalPlugins(univer: Univer) {
 	univer.registerPlugin((await sheets_formula).UniverSheetsFormulaPlugin);
 }
 
-function setupErrorModal(component_index: number) {
-	const resp_modal = document.getElementById(`errorModal_${component_index}`);
-	if (!resp_modal) throw new Error(`errorModal_${component_index} not found`);
+function setupErrorModal(resp_modal: HTMLElement) {
+	if (!resp_modal) throw new Error(`errorModal not found`);
 	const resp_modal_body = resp_modal.querySelector(".modal-body");
 	if (!resp_modal_body)
-		throw new Error(`errorModal_${component_index} not found`);
+		throw new Error(`errorModal not found`);
 	// @ts-ignore: bootstrap.is included by sqlpage
 	const Modal = window?.bootstrap?.Modal;
 	if (!Modal) throw new Error("bootstrap.Modal not found");
@@ -128,18 +134,6 @@ async function handleUpdate(
 		new errorModal.Modal(errorModal.resp_modal).show();
 	}
 }
-
-const CellPropsSchema = z.union([z.string(), z.number()]);
-
-const DataArraySchema = z
-	.tuple([
-		z.number().int().nonnegative(),
-		z.number().int().nonnegative(),
-		z.union([z.string(), z.number(), z.null()]),
-	])
-	.rest(CellPropsSchema);
-
-type CellProps = z.infer<typeof CellPropsSchema>;
 
 function cellFromProps(props: CellProps[]) {
 	const s: IStyleData & { id?: string } = {};
@@ -182,13 +176,17 @@ function setFrozenCells(
 	}
 }
 
-async function renderSpreadsheet(props: Props, data: any[]) {
-	const { update_link, freeze_x, freeze_y, component_index } = props;
-	const errorModal = setupErrorModal(component_index);
+async function renderSpreadsheet(
+	container: HTMLElement,
+	props: Props,
+	data: any[],
+) {
+	const { update_link, freeze_x, freeze_y } = props;
+	const errorModal = setupErrorModal(container.querySelector(".modal")!);
 
-	const worksheet = generateWorkSheet(data);
+	const worksheet = generateWorkSheet(data, await zod);
 
-	const univer = await setupUniver(component_index);
+	const univer = await setupUniver(container);
 	await loadOptionalPlugins(univer);
 
 	const workbook: Workbook = univer.createUnit(UNIVER_SHEET_TYPE, {
@@ -246,14 +244,47 @@ function handleSetRangeValues(
 	}
 }
 
-const rawProps = JSON.parse(
-	document?.currentScript?.dataset?.template_props || "{}",
-);
+type Zod = typeof import("zod");
 
-try {
-	const validatedProps = PropsSchema.parse(rawProps.props);
-	const data = z.any().array().parse(rawProps.data);
-	renderSpreadsheet(validatedProps, data);
-} catch (error) {
-	alert(`Invalid properties passed to the spreadsheet component: ${error}`);
+const PropsSchema = (z: Zod) =>
+	z.object({
+		update_link: z.string(),
+		freeze_x: z.number().int().nonnegative().default(0),
+		freeze_y: z.number().int().nonnegative().default(0),
+	});
+
+type Props = Zod.infer<ReturnType<typeof PropsSchema>>;
+
+const CellPropsSchema = (z: Zod) => z.union([z.string(), z.number()]);
+
+const DataArraySchema = (z: Zod) =>
+	z
+		.tuple([
+			z.number().int().nonnegative(),
+			z.number().int().nonnegative(),
+			z.union([z.string(), z.number(), z.null()]),
+		])
+		.rest(CellPropsSchema(z));
+
+type CellProps = Zod.infer<ReturnType<typeof CellPropsSchema>>;
+
+export async function renderSpreadsheetToElement(element: HTMLElement) {
+	try {
+		const dataset = element.dataset;
+		if (!dataset) throw new Error("Props not found");
+		const rawCells = JSON.parse(dataset?.cells || "[]");
+		if (!Array.isArray(rawCells))
+			throw new Error(`Invalid cells${dataset?.cells}`);
+		const validatedProps = PropsSchema(await zod).parse(
+			JSON.parse(dataset?.props || "{}"),
+		);
+		renderSpreadsheet(element, validatedProps, rawCells);
+	} catch (error) {
+		alert(`Invalid properties passed to the spreadsheet component: ${error}`);
+	}
 }
+
+const elems = document.getElementsByClassName("sqlpage_spreadsheet");
+const elem = elems[elems.length - 1];
+if (!(elem instanceof HTMLElement)) throw new Error("No spreadsheet elements found");
+renderSpreadsheetToElement(elem);

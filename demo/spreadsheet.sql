@@ -28,4 +28,4 @@ with recursive n(n) as (
   )
 select n+5 as y , 4 as x, n as value, true as bold, true as italic, true as center, 'cyan' as color, '### ##0.00 €' as number_format
 from n
-limit 10*1000;
+limit 100;

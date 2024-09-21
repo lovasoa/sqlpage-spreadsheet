@@ -1,28 +1,9 @@
-<div class="modal fade" id="errorModal_{{@component_index}}" tabindex="-1" aria-labelledby="errorModalLabel_{{@component_index}}" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Cell Update</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body"></div>
-    </div>
-  </div>
-</div>
-
 <style>@import url("./style.css");</style>
 
-<div id="_sqlpage_spreadsheet_univer_{{@component_index}}" class="sqlpage_spreadsheet" style="height: 80vh">
-  <div class="d-flex justify-content-center h-100 align-items-center">
-    <div class="spinner-border" role="status" style="width: 3rem; height: 3rem;">
-      <span class="visually-hidden">Loading spreadsheet...</span>
-    </div>
-  </div>
-</div>
- 
-<script 
-type="module"
-nonce="{{@csp_nonce}}"
+<div id="_sqlpage_spreadsheet_univer_{{@component_index}}"
+class="sqlpage_spreadsheet d-flex justify-content-center align-items-center"
+style="height: 80vh"
+data-props="{{stringify this}}"
 data-cells="
 [
 {{#each_row}}
@@ -41,4 +22,22 @@ data-cells="
   ]
 {{/each_row}}
 ]
-" src="spreadsheet.ts"></script>
+">
+  <div class="modal fade" tabindex="-1" aria-labelledby="errorModalLabel_{{@component_index}}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Cell Update</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="loader spinner-border" role="status" style="width: 3rem; height: 3rem;">
+    <span class="visually-hidden">Loading spreadsheet...</span>
+  </div>
+</div>
+
+<script type="module" nonce="{{@csp_nonce}}" src="./spreadsheet.ts"></script>

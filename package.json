@@ -5,7 +5,8 @@
 	"source": "./src/spreadsheet_component.html",
 	"browserslist": "> 0.5%, last 2 versions, not dead",
 	"scripts": {
-		"build": "parcel build",
+		"build": "parcel build --no-optimize --public-url /dist/",
+		"dev": "parcel watch --public-url /dist/",
 		"lint": "biome check",
 		"typecheck": "tsc --noEmit",
 		"fix": "biome check --fix --unsafe",
