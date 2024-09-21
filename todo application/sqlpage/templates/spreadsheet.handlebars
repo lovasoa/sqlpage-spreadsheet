@@ -32,72 +32,72 @@
  
 <script nonce="{{@csp_nonce}}">
   const resp_modal = document.getElementById('errorModal_{{@component_index}}');
-    {{#if update_link}}
-      async function onUpdate(x, y, value, custom) {
-        const relative_url = {{{stringify update_link}}};
-        const url = new URL(relative_url, window.location.href);
-        url.searchParams.append('_sqlpage_embed', 1);
-        const formData = new URLSearchParams();
-        formData.append("x", x);
-        formData.append("y", y);
-        if (value != null) formData.append("value", value);
-        if (custom && custom.id !== null) formData.append("id", custom.id);
-        const r = await fetch(url, {
-          method: "POST",
-          body: formData,
-        });
-        let resp_html = await r.text();
-        if (r.status !== 200 && !resp_html) resp_html = resp.statusText;
-        if (resp_html) {
-          resp_modal.querySelector('.modal-body').innerHTML = resp_html;
-          new bootstrap.Modal(resp_modal).show();
-        }
+  {{#if update_link}}
+    async function onUpdate(x, y, value, custom) {
+      const relative_url = {{{stringify update_link}}};
+      const url = new URL(relative_url, window.location.href);
+      url.searchParams.append('_sqlpage_embed', 1);
+      const formData = new URLSearchParams();
+      formData.append("x", x);
+      formData.append("y", y);
+      if (value != null) formData.append("value", value);
+      if (custom && custom.id !== null) formData.append("id", custom.id);
+      const r = await fetch(url, {
+        method: "POST",
+        body: formData,
+      });
+      let resp_html = await r.text();
+      if (r.status !== 200 && !resp_html) resp_html = resp.statusText;
+      if (resp_html) {
+        resp_modal.querySelector('.modal-body').innerHTML = resp_html;
+        new bootstrap.Modal(resp_modal).show();
       }
-    {{else}}
-      function onUpdate(x, y, value) {}
-    {{/if}}
-  
-    var {
-      UniverCore,
-      UniverDesign,
-      UniverEngineRender,
-      UniverEngineFormula,
-      UniverDocs,
-      UniverDocsUi,
-      UniverUi,
-      UniverSheets,
-      UniverSheetsUi,
-      UniverSheetsNumfmt,
-      UniverSheetsFormula,
-      UniverFacade,
-    } = window
- 
-    var univer = new UniverCore.Univer({
-      theme: UniverDesign.defaultTheme,
-      locale: UniverCore.LocaleType.EN_US,
-      locales: {
-        [UniverCore.LocaleType.EN_US]: UniverUMD['en-US'],
-      },
-    });
- 
-    univer.registerPlugin(UniverEngineRender.UniverRenderEnginePlugin);
-    univer.registerPlugin(UniverEngineFormula.UniverFormulaEnginePlugin);
- 
-    univer.registerPlugin(UniverUi.UniverUIPlugin, {
-      container: "_sqlpage_spreadsheet_univer_{{@component_index}}",
-    });
- 
-    univer.registerPlugin(UniverDocs.UniverDocsPlugin, {
-      hasScroll: false,
-    });
-    univer.registerPlugin(UniverDocsUi.UniverDocsUIPlugin);
- 
-    univer.registerPlugin(UniverSheets.UniverSheetsPlugin);
-    univer.registerPlugin(UniverSheetsUi.UniverSheetsUIPlugin);
-    univer.registerPlugin(UniverSheetsNumfmt.UniverSheetsNumfmtPlugin);
-    univer.registerPlugin(UniverSheetsFormula.UniverSheetsFormulaPlugin);
+    }
+  {{else}}
+    function onUpdate(x, y, value) {}
+  {{/if}}
 
-    const univerAPI = UniverFacade.FUniver.newAPI(univer);
+  var {
+    UniverCore,
+    UniverDesign,
+    UniverEngineRender,
+    UniverEngineFormula,
+    UniverDocs,
+    UniverDocsUi,
+    UniverUi,
+    UniverSheets,
+    UniverSheetsUi,
+    UniverSheetsNumfmt,
+    UniverSheetsFormula,
+    UniverFacade,
+  } = window
+
+  var univer = new UniverCore.Univer({
+    theme: UniverDesign.defaultTheme,
+    locale: UniverCore.LocaleType.EN_US,
+    locales: {
+      [UniverCore.LocaleType.EN_US]: UniverUMD['en-US'],
+    },
+  });
+
+  univer.registerPlugin(UniverEngineRender.UniverRenderEnginePlugin);
+  univer.registerPlugin(UniverEngineFormula.UniverFormulaEnginePlugin);
+
+  univer.registerPlugin(UniverUi.UniverUIPlugin, {
+    container: "_sqlpage_spreadsheet_univer_{{@component_index}}",
+  });
+
+  univer.registerPlugin(UniverDocs.UniverDocsPlugin, {
+    hasScroll: false,
+  });
+  univer.registerPlugin(UniverDocsUi.UniverDocsUIPlugin);
+
+  univer.registerPlugin(UniverSheets.UniverSheetsPlugin);
+  univer.registerPlugin(UniverSheetsUi.UniverSheetsUIPlugin);
+  univer.registerPlugin(UniverSheetsNumfmt.UniverSheetsNumfmtPlugin);
+  univer.registerPlugin(UniverSheetsFormula.UniverSheetsFormulaPlugin);
+
+  const univerAPI = UniverFacade.FUniver.newAPI(univer);
 </script>
 <script nonce="{{@csp_nonce}}" data-cells="
 [
@@ -120,7 +120,7 @@
 ">
 
   const tblrColors = Object.fromEntries(['azure', 'red', 'lime', 'purple', 'yellow', 'blue', 'gray-600', 'orange', 'black', 'pink', 'teal', 'indigo', 'cyan', 'green']
-      .map(c => [c, getComputedStyle(document.documentElement).getPropertyValue('--tblr-' + c)]));
+    .map(c => [c, getComputedStyle(document.documentElement).getPropertyValue('--tblr-' + c)]));
 
   const data_txt = document.currentScript.dataset.cells;
   const data = JSON.parse(data_txt);
@@ -198,14 +198,14 @@
   }
 
   univerAPI.onCommandExecuted(({id, params}) => {
-      if (id === "sheet.mutation.set-range-values") {
-          const { cellValue } = params;
-          for (const [row, cols] of Object.entries(cellValue)) {
-              for (const [col, {v, custom}] of Object.entries(cols)) {
-                  if (v === undefined) continue;
-                  onUpdate(parseInt(col), parseInt(row), v, custom);
-              }
-          }
+    if (id === "sheet.mutation.set-range-values") {
+      const { cellValue } = params;
+      for (const [row, cols] of Object.entries(cellValue)) {
+        for (const [col, {v, custom}] of Object.entries(cols)) {
+          if (v === undefined) continue;
+          onUpdate(parseInt(col), parseInt(row), v, custom);
+        }
       }
+    }
   });
 </script>
