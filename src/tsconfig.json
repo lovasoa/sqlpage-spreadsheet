@@ -3,6 +3,15 @@
     "baseUrl": ".",
     "paths": {
       "@univerjs/*": ["node_modules/@univerjs/*/lib/types"]
-    }
-  }
+    },
+    "skipLibCheck": true,
+    "noEmit": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
 }

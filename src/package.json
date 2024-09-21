@@ -5,8 +5,11 @@
   "source": "./spreadsheet_component.html",
   "scripts": {
     "build": "parcel build",
-    "check": "biome check",
-    "format": "biome format --write"
+    "lint": "biome check",
+    "typecheck": "tsc --noEmit",
+    "lintfix": "biome check --fix --unsafe",
+    "format": "biome format --write",
+    "ci": "npm run lint && npm run typecheck && npm run build"
   },
   "author": "",
   "license": "AGPL-3.0-or-later",
@@ -14,7 +17,8 @@
     "@biomejs/biome": "1.9.2",
     "buffer": "^6.0.3",
     "parcel": "^2.12.0",
-    "process": "^0.11.10"
+    "process": "^0.11.10",
+    "typescript": "^5.6.2"
   },
   "dependencies": {
     "@univerjs/core": "^0.2.15",

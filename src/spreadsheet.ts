@@ -8,14 +8,11 @@ import {
 	type CellValue,
 	CellValueType,
 	type ICellData,
-	ICommandInfo,
 	type IObjectMatrixPrimitiveType,
 	type IStyleData,
 	type IWorkbookData,
 	type IWorksheetData,
 	LocaleType,
-	Nullable,
-	Tools,
 	Univer,
 	UniverInstanceType,
 	type Workbook,
@@ -64,9 +61,14 @@ function setupUniver(component_index: number) {
 }
 
 function setupErrorModal(component_index: number) {
-	const resp_modal = document.getElementById(`errorModal_${component_index}`)!;
-	const resp_modal_body = resp_modal.querySelector(".modal-body")!;
-	const Modal = window["bootstrap"].Modal;
+	const resp_modal = document.getElementById(`errorModal_${component_index}`);
+	if (!resp_modal) throw new Error(`errorModal_${component_index} not found`);
+	const resp_modal_body = resp_modal.querySelector(".modal-body");
+	if (!resp_modal_body)
+		throw new Error(`errorModal_${component_index} not found`);
+	// @ts-ignore : bootstrap is included separately by sqlpage, and available globally
+	const Modal = window?.bootstrap?.Modal;
+	if (!Modal) throw new Error("bootstrap.Modal not found");
 	return { resp_modal, resp_modal_body, Modal };
 }
 
@@ -75,7 +77,7 @@ async function handleUpdate(
 	x: number,
 	y: number,
 	value: CellValue | null,
-	custom: any,
+	custom: Record<string, unknown>,
 	errorModal: ReturnType<typeof setupErrorModal>,
 ) {
 	if (!update_link) return;
@@ -87,7 +89,7 @@ async function handleUpdate(
 	formData.append("y", y.toString());
 	if (value != null)
 		formData.append("value", value == null ? "" : value.toString());
-	if (custom && custom.id !== null) formData.append("id", custom.id);
+	if (typeof custom.id === "string") formData.append("id", custom.id);
 	const r = await fetch(url, { method: "POST", body: formData });
 	let resp_html = await r.text();
 	if (r.status !== 200 && !resp_html) resp_html = r.statusText;
@@ -97,7 +99,9 @@ async function handleUpdate(
 	}
 }
 
-function cellFromProps(props: any[]): Partial<IStyleData & { id: string }> {
+function cellFromProps(
+	props: (string | number)[],
+): Partial<IStyleData & { id: string }> {
 	const s: Partial<IStyleData & { id: string }> = {};
 	for (let i = 0; i < props.length; i++) {
 		const n = props[i];
@@ -107,15 +111,15 @@ function cellFromProps(props: any[]): Partial<IStyleData & { id: string }> {
 			const color = props[++i];
 			s.bg = {
 				rgb: getComputedStyle(document.documentElement).getPropertyValue(
-					"--tblr-" + color,
+					`--tblr-${color}`,
 				),
 			};
 		} else if (n === 4) s.ht = 2;
 		else if (n === 5) s.ht = 3;
 		else if (n === 6) {
-			const pattern = props[++i];
+			const pattern = props[++i].toString();
 			s.n = { pattern };
-		} else if (n === 7) s.id = props[++i];
+		} else if (n === 7) s.id = props[++i].toString();
 	}
 	return s;
 }
@@ -123,14 +127,19 @@ function cellFromProps(props: any[]): Partial<IStyleData & { id: string }> {
 /**
  * [colIdx, rowIdx, value, ...props]
  */
-type DataArray = [number, number, string | number | null, ...any[]];
+type DataArray = [
+	number,
+	number,
+	string | number | null,
+	...(string | number)[],
+];
 
 function generateWorkSheet(dataArray: DataArray[]): Partial<IWorksheetData> {
 	const cellData: IObjectMatrixPrimitiveType<ICellData> = {};
 	let rowCount = 1000;
 	let columnCount = 26;
 
-	dataArray.forEach(([colIdx, rowIdx, value, ...props]) => {
+	for (const [colIdx, rowIdx, value, ...props] of dataArray) {
 		const cell: Partial<ICellData> = { v: value };
 		const style = props.length ? cellFromProps(props) : null;
 		cell.s = style;
@@ -141,7 +150,7 @@ function generateWorkSheet(dataArray: DataArray[]): Partial<IWorksheetData> {
 		else cellData[rowIdx] = { [colIdx]: cell };
 		rowCount = Math.max(rowCount, rowIdx);
 		columnCount = Math.max(columnCount, colIdx);
-	});
+	}
 
 	return {
 		id: "sqlpage",
@@ -152,7 +161,7 @@ function generateWorkSheet(dataArray: DataArray[]): Partial<IWorksheetData> {
 	};
 }
 
-function createWorkbook(univer: Univer, data: any[]): Workbook {
+function createWorkbook(univer: Univer, data: DataArray[]): Workbook {
 	return univer.createUnit<IWorkbookData, Workbook>(
 		UniverInstanceType.UNIVER_SHEET,
 		{
@@ -191,6 +200,12 @@ async function renderSpreadsheet({
 	freeze_y,
 	component_index,
 	data,
+}: {
+	update_link: string;
+	freeze_x: number;
+	freeze_y: number;
+	component_index: number;
+	data: DataArray[];
 }) {
 	const errorModal = setupErrorModal(component_index);
 	const univer = setupUniver(component_index);
@@ -216,7 +231,7 @@ async function renderSpreadsheet({
 						Number.parseInt(col),
 						Number.parseInt(row),
 						cell.v as V,
-						cell.custom,
+						cell.custom || {},
 						errorModal,
 					);
 				}
