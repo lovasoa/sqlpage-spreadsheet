@@ -1,0 +1,6 @@
+@media (width >= 768px) {
+	.sqlpage_spreadsheet {
+		width: calc(100% + 4rem);
+		margin: 0 -2rem;
+	}
+}
