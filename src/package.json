@@ -1,0 +1,29 @@
+{
+  "name": "sqlpage_spreadsheet",
+  "version": "1.0.0",
+  "description": "sqlpage spreadsheet component",
+  "source": "./spreadsheet_component.html",
+  "scripts": {
+    "build": "parcel build"
+  },
+  "author": "",
+  "license": "AGPL-3.0-or-later",
+  "devDependencies": {
+    "buffer": "^6.0.3",
+    "parcel": "^2.12.0",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "@univerjs/core": "^0.2.15",
+    "@univerjs/design": "^0.2.15",
+    "@univerjs/docs": "^0.2.15",
+    "@univerjs/docs-ui": "^0.2.15",
+    "@univerjs/engine-formula": "^0.2.15",
+    "@univerjs/engine-render": "^0.2.15",
+    "@univerjs/facade": "^0.2.15",
+    "@univerjs/sheets": "^0.2.15",
+    "@univerjs/sheets-formula": "^0.2.15",
+    "@univerjs/sheets-ui": "^0.2.15",
+    "@univerjs/ui": "^0.2.15"
+  }
+}
