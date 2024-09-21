@@ -1,5 +1,5 @@
 sqlpage.bin
 *.db
-src/node_modules
-src/dist
-src/.parcel-cache
+node_modules
+dist
+.parcel-cache
