@@ -36,12 +36,22 @@ const zod = import("zod");
 const docs_plugin = import("@univerjs/docs");
 const docs_ui_plugin = import("@univerjs/docs-ui");
 
-const DesignEnUS = import('node_modules/@univerjs/design/lib/locale/en-US.json');
-const SheetsEnUS = import('node_modules/@univerjs/sheets/lib/locale/en-US.json');
-const SheetsUIEnUS = import('node_modules/@univerjs/sheets-ui/lib/locale/en-US.json');
-const SheetsFormulaEnUS = import('node_modules/@univerjs/sheets-formula/lib/locale/en-US.json');
-const UIEnUS = import('node_modules/@univerjs/ui/lib/locale/en-US.json');
-const DocsUIEnUS = import('node_modules/@univerjs/docs-ui/lib/locale/en-US.json');
+const DesignEnUS = import(
+	"node_modules/@univerjs/design/lib/locale/en-US.json"
+);
+const SheetsEnUS = import(
+	"node_modules/@univerjs/sheets/lib/locale/en-US.json"
+);
+const SheetsUIEnUS = import(
+	"node_modules/@univerjs/sheets-ui/lib/locale/en-US.json"
+);
+const SheetsFormulaEnUS = import(
+	"node_modules/@univerjs/sheets-formula/lib/locale/en-US.json"
+);
+const UIEnUS = import("node_modules/@univerjs/ui/lib/locale/en-US.json");
+const DocsUIEnUS = import(
+	"node_modules/@univerjs/docs-ui/lib/locale/en-US.json"
+);
 
 const NUMBER_CELL_TYPE: typeof CellValueType.NUMBER = 2;
 const UNIVER_SHEET_TYPE: typeof UniverInstanceType.UNIVER_SHEET = 2;
@@ -85,12 +95,12 @@ async function setupUniver(container: HTMLElement) {
 		locale: LocaleType.EN_US,
 		locales: {
 			[LocaleType.EN_US]: Tools.deepMerge(
-			  await DesignEnUS,
-			  await SheetsEnUS,
-			  await SheetsUIEnUS,
-			  await SheetsFormulaEnUS,
-			  await UIEnUS,
-			  await DocsUIEnUS
+				await DesignEnUS,
+				await SheetsEnUS,
+				await SheetsUIEnUS,
+				await SheetsFormulaEnUS,
+				await UIEnUS,
+				await DocsUIEnUS,
 			),
 		},
 	});
@@ -113,10 +123,9 @@ async function loadOptionalPlugins(univer: Univer) {
 }
 
 function setupErrorModal(resp_modal: HTMLElement) {
-	if (!resp_modal) throw new Error(`errorModal not found`);
+	if (!resp_modal) throw new Error("errorModal not found");
 	const resp_modal_body = resp_modal.querySelector(".modal-body");
-	if (!resp_modal_body)
-		throw new Error(`errorModal not found`);
+	if (!resp_modal_body) throw new Error("errorModal not found");
 	// @ts-ignore: bootstrap.is included by sqlpage
 	const Modal = window?.bootstrap?.Modal;
 	if (!Modal) throw new Error("bootstrap.Modal not found");
@@ -196,7 +205,9 @@ async function renderSpreadsheet(
 	data: any[],
 ) {
 	const { update_link, freeze_x, freeze_y } = props;
-	const errorModal = setupErrorModal(container.querySelector(".modal")!);
+	const modal = container.querySelector(".modal");
+	if (!(modal instanceof HTMLElement)) throw new Error("modal not found");
+	const errorModal = setupErrorModal(modal);
 
 	const worksheet = generateWorkSheet(data, await zod);
 
@@ -300,5 +311,6 @@ export async function renderSpreadsheetToElement(element: HTMLElement) {
 
 const elems = document.getElementsByClassName("sqlpage_spreadsheet");
 const elem = elems[elems.length - 1];
-if (!(elem instanceof HTMLElement)) throw new Error("No spreadsheet elements found");
+if (!(elem instanceof HTMLElement))
+	throw new Error("No spreadsheet elements found");
 renderSpreadsheetToElement(elem);
