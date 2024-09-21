@@ -1,37 +1,41 @@
 {
-  "name": "sqlpage_spreadsheet",
-  "version": "1.0.0",
-  "description": "sqlpage spreadsheet component",
-  "source": "./src/spreadsheet_component.html",
-  "scripts": {
-    "build": "parcel build",
-    "lint": "biome check",
-    "typecheck": "tsc --noEmit",
-    "lintfix": "biome check --fix --unsafe",
-    "format": "biome format --write",
-    "ci": "npm run lint && npm run typecheck && npm run build"
-  },
-  "author": "",
-  "license": "AGPL-3.0-or-later",
-  "devDependencies": {
-    "@biomejs/biome": "1.9.2",
-    "buffer": "^6.0.3",
-    "parcel": "^2.12.0",
-    "process": "^0.11.10",
-    "typescript": "^5.6.2"
-  },
-  "dependencies": {
-    "@univerjs/core": "^0.2.15",
-    "@univerjs/design": "^0.2.15",
-    "@univerjs/docs": "^0.2.15",
-    "@univerjs/docs-ui": "^0.2.15",
-    "@univerjs/engine-formula": "^0.2.15",
-    "@univerjs/engine-render": "^0.2.15",
-    "@univerjs/facade": "^0.2.15",
-    "@univerjs/sheets": "^0.2.15",
-    "@univerjs/sheets-formula": "^0.2.15",
-    "@univerjs/sheets-ui": "^0.2.15",
-    "@univerjs/ui": "^0.2.15",
-    "zod": "^3.23.8"
-  }
+	"name": "sqlpage_spreadsheet",
+	"version": "1.0.0",
+	"description": "sqlpage spreadsheet component",
+	"source": "./src/spreadsheet_component.html",
+	"browserslist": "> 0.5%, last 2 versions, not dead",
+	"scripts": {
+		"build": "parcel build",
+		"lint": "biome check",
+		"typecheck": "tsc --noEmit",
+		"fix": "biome check --fix --unsafe",
+		"format": "biome format --write",
+		"ci": "npm run lint && npm run typecheck && npm run build"
+	},
+	"author": "",
+	"license": "AGPL-3.0-or-later",
+	"devDependencies": {
+		"@biomejs/biome": "1.9.2",
+		"buffer": "^6.0.3",
+		"parcel": "^2.12.0",
+		"process": "^0.11.10",
+		"typescript": "^5.6.2"
+	},
+	"dependencies": {
+		"@univerjs/core": "^0.2.15",
+		"@univerjs/design": "^0.2.15",
+		"@univerjs/docs": "^0.2.15",
+		"@univerjs/docs-ui": "^0.2.15",
+		"@univerjs/engine-formula": "^0.2.15",
+		"@univerjs/engine-render": "^0.2.15",
+		"@univerjs/facade": "^0.2.15",
+		"@univerjs/sheets": "^0.2.15",
+		"@univerjs/sheets-formula": "^0.2.15",
+		"@univerjs/sheets-ui": "^0.2.15",
+		"@univerjs/ui": "^0.2.15",
+		"zod": "^3.23.8"
+	},
+	"@parcel/bundler-default": {
+		"maxParallelRequests": 1
+	}
 }
