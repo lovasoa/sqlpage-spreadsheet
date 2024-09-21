@@ -16,6 +16,12 @@ import type {
 	SetRangeValuesMutation,
 } from "@univerjs/sheets";
 
+import "@univerjs/design/lib/index.css";
+import "@univerjs/ui/lib/index.css";
+import "@univerjs/docs-ui/lib/index.css";
+import "@univerjs/sheets-ui/lib/index.css";
+import "@univerjs/sheets-formula/lib/index.css";
+
 const univer_core = import("@univerjs/core");
 const design = import("@univerjs/design");
 const render_engine = import("@univerjs/engine-render");
@@ -27,12 +33,15 @@ const sheets_numfmt = import("@univerjs/sheets-numfmt");
 const sheets_formula = import("@univerjs/sheets-formula");
 const facade = import("@univerjs/facade");
 const zod = import("zod");
+const docs_plugin = import("@univerjs/docs");
+const docs_ui_plugin = import("@univerjs/docs-ui");
 
 const DesignEnUS = import('node_modules/@univerjs/design/lib/locale/en-US.json');
 const SheetsEnUS = import('node_modules/@univerjs/sheets/lib/locale/en-US.json');
 const SheetsUIEnUS = import('node_modules/@univerjs/sheets-ui/lib/locale/en-US.json');
 const SheetsFormulaEnUS = import('node_modules/@univerjs/sheets-formula/lib/locale/en-US.json');
 const UIEnUS = import('node_modules/@univerjs/ui/lib/locale/en-US.json');
+const DocsUIEnUS = import('node_modules/@univerjs/docs-ui/lib/locale/en-US.json');
 
 const NUMBER_CELL_TYPE: typeof CellValueType.NUMBER = 2;
 const UNIVER_SHEET_TYPE: typeof UniverInstanceType.UNIVER_SHEET = 2;
@@ -79,7 +88,8 @@ async function setupUniver(container: HTMLElement) {
 			  await SheetsEnUS,
 			  await SheetsUIEnUS,
 			  await SheetsFormulaEnUS,
-			  await UIEnUS
+			  await UIEnUS,
+			  await DocsUIEnUS
 			),
 		},
 	});
@@ -88,6 +98,8 @@ async function setupUniver(container: HTMLElement) {
 	univer.registerPlugin((await ui_plugin).UniverUIPlugin, { container });
 	univer.registerPlugin((await sheets_plugin).UniverSheetsPlugin);
 	univer.registerPlugin((await sheets_ui_plugin).UniverSheetsUIPlugin);
+	univer.registerPlugin((await docs_plugin).UniverDocsPlugin);
+	univer.registerPlugin((await docs_ui_plugin).UniverDocsUIPlugin);
 
 	return univer;
 }
