@@ -10,10 +10,10 @@
   </div>
 </div>
 
-<script nonce="{{@csp_nonce}}" src="https://cdn.jsdelivr.net/npm/@univerjs/umd@0.2.6/lib/univer.full.umd.js"></script>
-<script nonce="{{@csp_nonce}}" src="https://cdn.jsdelivr.net/npm/@univerjs/umd@0.2.6/lib/locale/en-US.js"></script>
+<script nonce="{{@csp_nonce}}" src="https://cdn.jsdelivr.net/npm/@univerjs/umd@0.2.14/lib/univer.full.umd.js"></script>
+<script nonce="{{@csp_nonce}}" src="https://cdn.jsdelivr.net/npm/@univerjs/umd@0.2.14/lib/locale/en-US.js"></script>
 <style>
-  @import url(https://cdn.jsdelivr.net/npm/@univerjs/umd@0.2.6/lib/univer.min.css);
+  @import url(https://cdn.jsdelivr.net/npm/@univerjs/umd@0.2.14/lib/univer.min.css);
   @media (min-width: 768px) {
     .sqlpage_spreadsheet {
       margin: 0 -2rem;
@@ -173,7 +173,7 @@
   const workbook = {
     "sheetOrder": ["sqlpage"],
     "name": "sqlpage",
-    "appVersion": "0.2.6",
+    "appVersion": "0.2.14",
     "locale": "enUS",
     "sheets": {
       "sqlpage":generateWorkSheet(data)
@@ -198,6 +198,7 @@
   }
 
   univerAPI.onCommandExecuted(({id, params}) => {
+    console.log(id, params);
     if (id === "sheet.mutation.set-range-values") {
       const { cellValue } = params;
       for (const [row, cols] of Object.entries(cellValue)) {
