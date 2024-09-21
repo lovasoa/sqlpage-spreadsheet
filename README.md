@@ -1,5 +1,11 @@
 # Spreadsheet component
 
+> [!WARNING]
+> **Important: LICENSE** This component is not distributed under the same permissive MIT license as the rest of SQLpage, but rather under the [GNU AGPL v3 license](./LICENSE).
+> This means that you can either:
+> - use the component in a project that is itself open source under the AGPL license, for free, or
+> - use the component in a project that is not open source, for commercial use, but in this case you **must** buy a license for the component from us: contact@datapage.app
+
 The spreadsheet component generates an online editable spreadsheet similar to Google Sheets or Excel, the contents of which are loaded from the results of your SQL query.  
 It has the ability to edit cell data by posting their contents to another SQLpage.
 
