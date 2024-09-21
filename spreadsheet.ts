@@ -37,6 +37,17 @@ import { UniverSheetsFormulaPlugin } from "@univerjs/sheets-formula";
 import { UniverSheetsNumfmtPlugin } from "@univerjs/sheets-numfmt";
 import { UniverSheetsUIPlugin } from "@univerjs/sheets-ui";
 
+import { z } from "zod";
+
+const PropsSchema = z.object({
+	update_link: z.string().url(),
+	freeze_x: z.number().int().nonnegative(),
+	freeze_y: z.number().int().nonnegative(),
+	component_index: z.number().int().nonnegative(),
+});
+
+type Props = z.infer<typeof PropsSchema>;
+
 function setupUniver(component_index: number) {
 	const univer = new Univer({
 		theme: defaultTheme,
@@ -99,9 +110,17 @@ async function handleUpdate(
 	}
 }
 
-function cellFromProps(
-	props: (string | number)[],
-): Partial<IStyleData & { id: string }> {
+const CellPropsSchema = z.union([z.string(), z.number()]);
+
+const DataArraySchema = z.tuple([
+	z.number().int().nonnegative(), // colIdx
+	z.number().int().nonnegative(), // rowIdx
+	z.union([z.string(), z.number(), z.null()]), // value
+]).rest(CellPropsSchema); // props
+
+type CellProps = z.infer<typeof CellPropsSchema>;
+
+function cellFromProps(props: CellProps[]) {
 	const s: Partial<IStyleData & { id: string }> = {};
 	for (let i = 0; i < props.length; i++) {
 		const n = props[i];
@@ -124,22 +143,13 @@ function cellFromProps(
 	return s;
 }
 
-/**
- * [colIdx, rowIdx, value, ...props]
- */
-type DataArray = [
-	number,
-	number,
-	string | number | null,
-	...(string | number)[],
-];
-
-function generateWorkSheet(dataArray: DataArray[]): Partial<IWorksheetData> {
+function generateWorkSheet(dataArray: any[]): Partial<IWorksheetData> {
 	const cellData: IObjectMatrixPrimitiveType<ICellData> = {};
 	let rowCount = 1000;
 	let columnCount = 26;
 
-	for (const [colIdx, rowIdx, value, ...props] of dataArray) {
+	for (const elem of dataArray) {
+		const [colIdx, rowIdx, value, ...props] = DataArraySchema.parse(elem);
 		const cell: Partial<ICellData> = { v: value };
 		const style = props.length ? cellFromProps(props) : null;
 		cell.s = style;
@@ -161,7 +171,7 @@ function generateWorkSheet(dataArray: DataArray[]): Partial<IWorksheetData> {
 	};
 }
 
-function createWorkbook(univer: Univer, data: DataArray[]): Workbook {
+function createWorkbook(univer: Univer, data: any[]): Workbook {
 	return univer.createUnit<IWorkbookData, Workbook>(
 		UniverInstanceType.UNIVER_SHEET,
 		{
@@ -194,19 +204,8 @@ function setFrozenCells(
 	}
 }
 
-async function renderSpreadsheet({
-	update_link,
-	freeze_x,
-	freeze_y,
-	component_index,
-	data,
-}: {
-	update_link: string;
-	freeze_x: number;
-	freeze_y: number;
-	component_index: number;
-	data: DataArray[];
-}) {
+async function renderSpreadsheet(props: Props, data: any[]) {
+	const { update_link, freeze_x, freeze_y, component_index } = props;
 	const errorModal = setupErrorModal(component_index);
 	const univer = setupUniver(component_index);
 	const univerAPI = FUniver.newAPI(univer);
@@ -240,7 +239,14 @@ async function renderSpreadsheet({
 	});
 }
 
-const props = JSON.parse(
-	document?.currentScript?.dataset?.template_props || "{}",
+const rawProps = JSON.parse(
+	document?.currentScript?.dataset?.template_props || "{}"
 );
-renderSpreadsheet(props);
+
+try {
+	const validatedProps = PropsSchema.parse(rawProps.props);
+	const data = z.any().array().parse(rawProps.data); // will be fully validated later
+	renderSpreadsheet(validatedProps, data);
+} catch (error) {
+	alert(`Invalid properties passed to the spreadsheet component: ${error}`);
+}
