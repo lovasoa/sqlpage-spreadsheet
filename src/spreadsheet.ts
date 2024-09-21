@@ -82,6 +82,7 @@ async function setupUniver(container: HTMLElement) {
 	const univer = new Univer({
 		theme: defaultTheme,
 		logLevel: 3,
+		locale: LocaleType.EN_US,
 		locales: {
 			[LocaleType.EN_US]: Tools.deepMerge(
 			  await DesignEnUS,
