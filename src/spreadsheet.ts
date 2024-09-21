@@ -95,6 +95,7 @@ async function setupUniver(container: HTMLElement) {
 	});
 
 	univer.registerPlugin((await render_engine).UniverRenderEnginePlugin);
+	container.className = "sqlpage_spreadsheet";
 	univer.registerPlugin((await ui_plugin).UniverUIPlugin, { container });
 	univer.registerPlugin((await sheets_plugin).UniverSheetsPlugin);
 	univer.registerPlugin((await sheets_ui_plugin).UniverSheetsUIPlugin);

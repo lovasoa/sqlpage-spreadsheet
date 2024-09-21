@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"description": "sqlpage spreadsheet component",
 	"source": "./src/spreadsheet_component.html",
-	"browserslist": "> 0.5%, last 2 versions, not dead",
+	"browserslist": "> 3%, last 2 versions, not dead",
 	"scripts": {
 		"build": "parcel build --no-optimize --public-url /dist/",
 		"dev": "parcel watch --public-url /dist/",
@@ -37,6 +37,6 @@
 		"zod": "^3.23.8"
 	},
 	"@parcel/bundler-default": {
-		"maxParallelRequests": 1
+		"minBundleSize": 60000
 	}
 }
