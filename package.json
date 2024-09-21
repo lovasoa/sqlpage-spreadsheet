@@ -2,7 +2,7 @@
   "name": "sqlpage_spreadsheet",
   "version": "1.0.0",
   "description": "sqlpage spreadsheet component",
-  "source": "./spreadsheet_component.html",
+  "source": "./src/spreadsheet_component.html",
   "scripts": {
     "build": "parcel build",
     "lint": "biome check",
