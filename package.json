@@ -1,6 +1,6 @@
 {
 	"name": "sqlpage_spreadsheet",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "sqlpage spreadsheet component",
 	"source": "./src/spreadsheet_component.html",
 	"browserslist": "> 3%, last 2 versions, not dead",

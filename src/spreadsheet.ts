@@ -155,7 +155,7 @@ function setupErrorModal(resp_modal: HTMLElement) {
 }
 
 async function handleUpdate(
-	update_link: string,
+	update_link: Props["update_link"],
 	x: number,
 	y: number,
 	value: CellValue | null | undefined,
@@ -268,7 +268,7 @@ async function renderSpreadsheet(
 
 function handleSetRangeValues(
 	params: ISetRangeValuesMutationParams,
-	update_link: string,
+	update_link: Props["update_link"],
 	errorModal: ReturnType<typeof setupErrorModal>,
 ) {
 	const { cellValue } = params;
@@ -295,7 +295,7 @@ type Zod = typeof import("zod");
 
 const PropsSchema = (z: Zod) =>
 	z.object({
-		update_link: z.string(),
+		update_link: z.string().optional(),
 		freeze_x: z.number().int().nonnegative().default(0),
 		freeze_y: z.number().int().nonnegative().default(0),
 	});
