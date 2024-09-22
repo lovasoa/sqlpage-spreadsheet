@@ -128,20 +128,18 @@ async function setupUniver(container: HTMLElement) {
 	});
 
 	univer.registerPlugin(await render_engine);
+	const uiPlugin = await ui_plugin;
 	container.className = "sqlpage_spreadsheet";
-	univer.registerPlugin(await ui_plugin, { container });
+	univer.registerPlugin(uiPlugin, { container });
 	univer.registerPlugin(await sheets_plugin);
 	univer.registerPlugin(await sheets_ui_plugin);
 	univer.registerPlugin(await docs_plugin);
 	univer.registerPlugin(await docs_ui_plugin);
-
-	return univer;
-}
-
-async function loadOptionalPlugins(univer: Univer) {
 	univer.registerPlugin(await engine_formula);
 	univer.registerPlugin(await sheets_numfmt);
 	univer.registerPlugin(await sheets_formula);
+
+	return univer;
 }
 
 function setupErrorModal(resp_modal: HTMLElement) {
@@ -233,7 +231,6 @@ async function renderSpreadsheet(
 	const worksheet = generateWorkSheet(data, await zod);
 
 	const univer = await setupUniver(container);
-	await loadOptionalPlugins(univer);
 
 	const workbook: Workbook = univer.createUnit(UNIVER_SHEET_TYPE, {
 		sheetOrder: ["sqlpage"],
