@@ -3,6 +3,8 @@ name: CI
 on:
   push:
     branches: [ main ]
+    tags:
+      - 'v*'
   pull_request:
     branches: [ main ]
 
@@ -23,3 +25,70 @@ jobs:
 
       - name: Check
         run: npm run ci
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Create Release ZIP
+        run: |
+          mkdir -p release/dist
+          cp -r dist/* release/dist/
+          mkdir -p release/sqlpage/templates
+          cp dist/spreadsheet_component.html release/sqlpage/templates/spreadsheet.handlebars
+          cd release
+          zip -r ../release.zip .
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release.zip
+          asset_name: release.zip
+          asset_content_type: application/zip
+
+      - name: Create README.md
+        run: |
+          echo "# Spreadsheet Component Installation" > README.md
+          echo "" >> README.md
+          echo "To install the Spreadsheet component:" >> README.md
+          echo "1. Unzip the release.zip file" >> README.md
+          echo "2. Copy the contents of the 'dist' folder to your project's 'dist' directory" >> README.md
+          echo "3. Copy 'sqlpage/templates/spreadsheet.handlebars' to your project's 'sqlpage/templates' directory" >> README.md
+
+      - name: Upload README.md
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./README.md
+          asset_name: README.md
+          asset_content_type: text/markdown
