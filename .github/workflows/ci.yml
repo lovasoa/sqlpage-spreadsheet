@@ -32,6 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -76,14 +78,19 @@ jobs:
             spreadsheet.handlebars
             README.md
           body: |
-            Release: ${{ github.ref_name }}
+            ## Release ${{ github.ref_name }}
 
             ${{ steps.tag_description.outputs.TAG_DESC }}
 
             ### To install the Spreadsheet component
 
-            Copy the spreadsheet.handlebars file to your project's 'sqlpage/templates' directory.
-            You can then use the component in your SQLPage project with `select 'spreadsheet' as component`.
+            1. Download the asset named `spreadsheet.handlebars` below.
+            2. Copy the file to your project's `sqlpage/templates` directory.
+            3. You can then use the component in your SQLPage project with 
+            
+            ```sql
+            select 'spreadsheet' as component
+            ```
 
             ### Offline distribution
 
