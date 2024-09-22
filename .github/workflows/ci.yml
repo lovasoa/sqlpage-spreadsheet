@@ -21,7 +21,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Check
         run: npm run ci
@@ -39,7 +39,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Get version
         id: get_version
@@ -64,9 +64,8 @@ jobs:
       - name: Get tag description
         id: tag_description
         run: |
-          TAG_DESC=$(git tag -l --format='%(contents)' ${{ github.ref_name }})
           echo "TAG_DESC<<EOF" >> $GITHUB_OUTPUT
-          echo "$TAG_DESC" >> $GITHUB_OUTPUT
+          git tag -l --format='%(contents)' ${{ github.ref_name }} >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Create Release
@@ -81,10 +80,12 @@ jobs:
 
             ${{ steps.tag_description.outputs.TAG_DESC }}
 
-            To install the Spreadsheet component:
-            
+            ### To install the Spreadsheet component
+
             Copy the spreadsheet.handlebars file to your project's 'sqlpage/templates' directory.
             You can then use the component in your SQLPage project with `select 'spreadsheet' as component`.
+
+            ### Offline distribution
 
             The default distribution downloads the spreadsheet assets at runtime from the internet.
             If you want to install the component entirely offline, you can use the `release.zip` distribution:
