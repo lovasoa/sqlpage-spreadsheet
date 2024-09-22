@@ -22,19 +22,41 @@ import "@univerjs/docs-ui/lib/index.css";
 import "@univerjs/sheets-ui/lib/index.css";
 import "@univerjs/sheets-formula/lib/index.css";
 
-const univer_core = import("@univerjs/core");
-const design = import("@univerjs/design");
-const render_engine = import("@univerjs/engine-render");
-const ui_plugin = import("@univerjs/ui");
-const sheets_plugin = import("@univerjs/sheets");
-const sheets_ui_plugin = import("@univerjs/sheets-ui");
-const engine_formula = import("@univerjs/engine-formula");
-const sheets_numfmt = import("@univerjs/sheets-numfmt");
-const sheets_formula = import("@univerjs/sheets-formula");
-const facade = import("@univerjs/facade");
+const univer_core = import("@univerjs/core").then(
+	({ Univer, LocaleType, Tools }) => ({ Univer, LocaleType, Tools }),
+);
+const design = import("@univerjs/design").then(({ defaultTheme }) => ({
+	defaultTheme,
+}));
+const render_engine = import("@univerjs/engine-render").then(
+	({ UniverRenderEnginePlugin }) => UniverRenderEnginePlugin,
+);
+const ui_plugin = import("@univerjs/ui").then(
+	({ UniverUIPlugin }) => UniverUIPlugin,
+);
+const sheets_plugin = import("@univerjs/sheets").then(
+	({ UniverSheetsPlugin }) => UniverSheetsPlugin,
+);
+const sheets_ui_plugin = import("@univerjs/sheets-ui").then(
+	({ UniverSheetsUIPlugin }) => UniverSheetsUIPlugin,
+);
+const engine_formula = import("@univerjs/engine-formula").then(
+	({ UniverFormulaEnginePlugin }) => UniverFormulaEnginePlugin,
+);
+const sheets_numfmt = import("@univerjs/sheets-numfmt").then(
+	({ UniverSheetsNumfmtPlugin }) => UniverSheetsNumfmtPlugin,
+);
+const sheets_formula = import("@univerjs/sheets-formula").then(
+	({ UniverSheetsFormulaPlugin }) => UniverSheetsFormulaPlugin,
+);
+const facade = import("@univerjs/facade").then(({ FUniver }) => ({ FUniver }));
 const zod = import("zod");
-const docs_plugin = import("@univerjs/docs");
-const docs_ui_plugin = import("@univerjs/docs-ui");
+const docs_plugin = import("@univerjs/docs").then(
+	({ UniverDocsPlugin }) => UniverDocsPlugin,
+);
+const docs_ui_plugin = import("@univerjs/docs-ui").then(
+	({ UniverDocsUIPlugin }) => UniverDocsUIPlugin,
+);
 
 const DesignEnUS = import(
 	"node_modules/@univerjs/design/lib/locale/en-US.json"
@@ -105,21 +127,21 @@ async function setupUniver(container: HTMLElement) {
 		},
 	});
 
-	univer.registerPlugin((await render_engine).UniverRenderEnginePlugin);
+	univer.registerPlugin((await render_engine));
 	container.className = "sqlpage_spreadsheet";
-	univer.registerPlugin((await ui_plugin).UniverUIPlugin, { container });
-	univer.registerPlugin((await sheets_plugin).UniverSheetsPlugin);
-	univer.registerPlugin((await sheets_ui_plugin).UniverSheetsUIPlugin);
-	univer.registerPlugin((await docs_plugin).UniverDocsPlugin);
-	univer.registerPlugin((await docs_ui_plugin).UniverDocsUIPlugin);
+	univer.registerPlugin((await ui_plugin), { container });
+	univer.registerPlugin((await sheets_plugin));
+	univer.registerPlugin((await sheets_ui_plugin));
+	univer.registerPlugin((await docs_plugin));
+	univer.registerPlugin((await docs_ui_plugin));
 
 	return univer;
 }
 
 async function loadOptionalPlugins(univer: Univer) {
-	univer.registerPlugin((await engine_formula).UniverFormulaEnginePlugin);
-	univer.registerPlugin((await sheets_numfmt).UniverSheetsNumfmtPlugin);
-	univer.registerPlugin((await sheets_formula).UniverSheetsFormulaPlugin);
+	univer.registerPlugin((await engine_formula));
+	univer.registerPlugin((await sheets_numfmt));
+	univer.registerPlugin((await sheets_formula));
 }
 
 function setupErrorModal(resp_modal: HTMLElement) {
