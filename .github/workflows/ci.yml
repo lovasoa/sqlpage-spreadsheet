@@ -61,6 +61,14 @@ jobs:
           cd release
           zip -r ../release.zip .
 
+      - name: Get tag description
+        id: tag_description
+        run: |
+          TAG_DESC=$(git tag -l --format='%(contents)' ${{ github.ref_name }})
+          echo "TAG_DESC<<EOF" >> $GITHUB_OUTPUT
+          echo "$TAG_DESC" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
@@ -69,6 +77,10 @@ jobs:
             spreadsheet.handlebars
             README.md
           body: |
+            Release: ${{ github.ref_name }}
+
+            ${{ steps.tag_description.outputs.TAG_DESC }}
+
             To install the Spreadsheet component:
             
             Copy the spreadsheet.handlebars file to your project's 'sqlpage/templates' directory.
