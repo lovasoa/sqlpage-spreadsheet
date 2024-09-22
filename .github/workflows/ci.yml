@@ -41,11 +41,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Get version
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
       - name: Build
         run: |
           npx parcel build --public-url /dist/
           cp dist/spreadsheet_component.html spreadsheet.dist.handlebars
-          npx parcel build --public-url https://lovasoa.github.io/sqlpage-spreadsheet/dist/
+          npx parcel build --public-url https://lovasoa.github.io/sqlpage-spreadsheet/${{ steps.get_version.outputs.VERSION }}/dist/
           cp dist/spreadsheet_component.html spreadsheet.handlebars
 
       - name: Create Release ZIP
@@ -82,8 +86,10 @@ jobs:
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions@users.noreply.github.com'
-          git checkout --orphan gh-pages
-          git rm -rf .
-          git add dist
-          git commit -m "Deploy to GitHub Pages"
-          git push -f origin gh-pages:gh-pages
+          git fetch origin gh-pages
+          git checkout gh-pages
+          mkdir -p ${{ steps.get_version.outputs.VERSION }}
+          cp -r dist ${{ steps.get_version.outputs.VERSION }}/
+          git add ${{ steps.get_version.outputs.VERSION }}
+          git commit -m "Deploy version ${{ steps.get_version.outputs.VERSION }} to GitHub Pages"
+          git push origin gh-pages
