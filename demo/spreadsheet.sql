@@ -9,7 +9,8 @@ select 'spreadsheet' as component,
 select 
   row_number() over (order by created_at) as x,
   0 as y,
-  id as value
+  id as value,
+  '#80cbc4' as color -- light teal
 from todos
 order by created_at;
 
@@ -26,6 +27,14 @@ with recursive n(n) as (
     union all
     select n + 1 from n
   )
-select n+5 as y , 4 as x, n as value, true as bold, true as italic, true as center, 'cyan' as color, '### ##0.00 €' as number_format
+select 
+  n+5 as y ,
+  4 as x, 
+  n as value, 
+  true as bold, 
+  true as italic, 
+  true as center, 
+  'pink-lt' as color, 
+  '### ##0.00 €' as number_format
 from n
 limit 100;

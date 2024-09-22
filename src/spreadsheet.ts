@@ -180,6 +180,8 @@ async function handleUpdate(
 	}
 }
 
+const CSS_VARS = getComputedStyle(document.documentElement);
+
 function cellFromProps(props: CellProps[]) {
 	const s: IStyleData & { id?: string } = {};
 	for (let i = 0; i < props.length; i++) {
@@ -187,12 +189,9 @@ function cellFromProps(props: CellProps[]) {
 		if (n === 1) s.bl = 1;
 		else if (n === 2) s.it = 1;
 		else if (n === 3) {
-			const color = props[++i];
-			s.bg = {
-				rgb: getComputedStyle(document.documentElement).getPropertyValue(
-					`--tblr-${color}`,
-				),
-			};
+			const color = props[++i].toString();
+			const rgb = CSS_VARS.getPropertyValue(`--tblr-${color}`) || color;
+			s.bg = { rgb };
 		} else if (n === 4) s.ht = 2;
 		else if (n === 5) s.ht = 3;
 		else if (n === 6) {
@@ -253,7 +252,7 @@ async function renderSpreadsheet(
 	setFrozenCells(univerAPI, activeSheet, freeze_x, freeze_y);
 
 	univerAPI.onCommandExecuted(({ id, params }) => {
-		console.log(id, params);
+		// To debug: console.log(id, params);
 		const set_range: typeof SetRangeValuesMutation.id =
 			"sheet.mutation.set-range-values";
 		if (id === set_range) {
