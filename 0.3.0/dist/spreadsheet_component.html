@@ -1,0 +1,19 @@
+<style>@media (width>=768px){.sqlpage_spreadsheet{width:calc(100% + 4rem);margin:0 -2rem}}</style><link rel="stylesheet" href="https://lovasoa.github.io/sqlpage-spreadsheet/dist/spreadsheet_component.1f53b4c5.css"><div id="_sqlpage_spreadsheet_univer_{{@component_index}}" class="align-items-center d-flex justify-content-center sqlpage_spreadsheet" style="height:80vh" data-props="{{stringify this}}" data-cells="
+[
+{{#each_row}}
+  {{~#unless (eq @row_index 0)~}}
+    ,
+  {{~/unless~}}
+  [
+    {{~stringify x~}}, {{~stringify y~}}, {{~stringify value~}}
+    {{~#if bold~}} ,1 {{~/if~}}
+    {{~#if italic~}} ,2 {{~/if~}}
+    {{~#if color~}} ,3,{{stringify color}} {{~/if~}}
+    {{~#if center~}} ,4 {{~/if~}}
+    {{~#if right~}} ,5 {{~/if~}}
+    {{~#if number_format~}} ,6,{{stringify number_format}} {{~/if~}}
+    {{~#if id~}} ,7,{{stringify id}} {{~/if~}}
+  ]
+{{/each_row}}
+]
+"> <div class="fade modal" tabindex="-1" aria-labelledby="errorModalLabel_{{@component_index}}" aria-hidden="true"> <div class="modal-dialog"> <div class="modal-content"> <div class="modal-header"> <h5 class="modal-title">Cell Update</h5> <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> </div> <div class="modal-body"></div> </div> </div> </div> <div class="loader spinner-border" role="status" style="width:3rem;height:3rem"> <span class="visually-hidden">Loading spreadsheet...</span> </div> </div><script type="module" nonce="{{@csp_nonce}}" src="https://lovasoa.github.io/sqlpage-spreadsheet/dist/spreadsheet_component.8913066a.js"></script><script nonce="{{@csp_nonce}}" src="https://lovasoa.github.io/sqlpage-spreadsheet/dist/spreadsheet_component.dcd1e0b5.js" nomodule defer></script>
