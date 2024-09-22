@@ -127,21 +127,21 @@ async function setupUniver(container: HTMLElement) {
 		},
 	});
 
-	univer.registerPlugin((await render_engine));
+	univer.registerPlugin(await render_engine);
 	container.className = "sqlpage_spreadsheet";
-	univer.registerPlugin((await ui_plugin), { container });
-	univer.registerPlugin((await sheets_plugin));
-	univer.registerPlugin((await sheets_ui_plugin));
-	univer.registerPlugin((await docs_plugin));
-	univer.registerPlugin((await docs_ui_plugin));
+	univer.registerPlugin(await ui_plugin, { container });
+	univer.registerPlugin(await sheets_plugin);
+	univer.registerPlugin(await sheets_ui_plugin);
+	univer.registerPlugin(await docs_plugin);
+	univer.registerPlugin(await docs_ui_plugin);
 
 	return univer;
 }
 
 async function loadOptionalPlugins(univer: Univer) {
-	univer.registerPlugin((await engine_formula));
-	univer.registerPlugin((await sheets_numfmt));
-	univer.registerPlugin((await sheets_formula));
+	univer.registerPlugin(await engine_formula);
+	univer.registerPlugin(await sheets_numfmt);
+	univer.registerPlugin(await sheets_formula);
 }
 
 function setupErrorModal(resp_modal: HTMLElement) {
