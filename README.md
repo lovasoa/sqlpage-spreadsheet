@@ -29,7 +29,7 @@ It has the ability to edit cell data by posting their contents to another SQLpag
 - **value** the value of the cell
 - **bold** If present, the cell text is bold
 - **italic** If present, the cell text is italic
-- **color** cell background color
+- **color** cell background color. Can be a [SQLPage color name](https://sql.datapage.app/colors.sql) or a hexadecimal color code like `#80cbc4`.
 - **center** If present, the cell text is centered
 - **right** If present, the cell text is right-aligned
 - **number\_format** format the number according to the specified number format. Uses [excel number format codes](https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68).
