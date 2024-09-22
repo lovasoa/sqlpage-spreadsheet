@@ -32,8 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -66,6 +64,7 @@ jobs:
       - name: Get tag description
         id: tag_description
         run: |
+          git fetch --tags --force
           echo "TAG_DESC<<EOF" >> $GITHUB_OUTPUT
           git tag -l --format='%(contents)' ${{ github.ref_name }} >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
