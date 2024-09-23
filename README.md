@@ -52,3 +52,27 @@ It has the ability to edit cell data by posting their contents to another SQLpag
 - **wrap_strategy_clip** If present, text is clipped if it exceeds cell width
 - **wrap_strategy_wrap** If present, text wraps within the cell
 - **text_direction_rtl** If present, text direction is right-to-left
+
+### Example
+
+#### `index.sql`
+```sql
+select 'spreadsheet' as component,
+  'spreadsheet_update.sql' as update_link;
+
+select 
+  row_number() over (order by created_at) as x, -- x-axis: chronological order
+  1 as y, -- y-axis: second row
+  todo_item as value, -- cell content: todo item
+  todo_id as id -- cell id (used for update link)
+  '#80cbc4' as color -- light teal
+from todos
+order by created_at;
+```
+#### `spreadsheet_update.sql`
+
+```sql
+update todos set todo_item = :value where id = :id;
+```
+
+See the [full example](./demo/spreadsheet.sql) in the demo folder.
