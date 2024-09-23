@@ -11,7 +11,7 @@
 		"typecheck": "tsc --noEmit",
 		"fix": "biome check --fix --unsafe",
 		"format": "biome format --write",
-		"ci": "npm run lint && npm run typecheck && npm run build"
+		"test": "npm run lint && npm run typecheck && npm run build"
 	},
 	"author": "",
 	"license": "AGPL-3.0-or-later",
