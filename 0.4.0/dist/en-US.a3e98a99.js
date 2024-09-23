@@ -1,0 +1,2 @@
+(0,("undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:"undefined"!=typeof window?window:"undefined"!=typeof global?global:{}).parcelRequire26fc.register)("3OUvn",function(e,o){e.exports=JSON.parse('{"sheets":{"tabs":{"sheetCopy":"(Copy{0})","sheet":"Sheet"},"info":{"overlappingSelections":"Cannot use that command on overlapping selections","acrossMergedCell":"Across a merged cell","partOfCell":"Only part of a merged cell is selected","hideSheet":"No visible sheet after you hide this"}}}')});
+//# sourceMappingURL=en-US.a3e98a99.js.map
