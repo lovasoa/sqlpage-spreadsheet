@@ -6,14 +6,8 @@ import type {
 	IStyleData,
 	IWorksheetData,
 	UniverInstanceType,
-	Workbook,
-	Worksheet,
 } from "@univerjs/core";
-import type { FUniver } from "@univerjs/facade";
-import type {
-	ISetFrozenMutationParams,
-	ISetRangeValuesMutationParams,
-} from "@univerjs/sheets";
+import type { ISetRangeValuesMutationParams } from "@univerjs/sheets";
 
 import "@univerjs/design/lib/index.css";
 import "@univerjs/ui/lib/index.css";
@@ -34,10 +28,16 @@ const ui_plugin = import("@univerjs/ui").then(
 	({ UniverUIPlugin }) => UniverUIPlugin,
 );
 const univer_sheets = import("@univerjs/sheets").then(
-	({ UniverSheetsPlugin, SetRangeValuesMutation, SetFrozenCommand }) => ({
+	({
 		UniverSheetsPlugin,
 		SetRangeValuesMutation,
 		SetFrozenCommand,
+		SetSelectionsOperation,
+	}) => ({
+		UniverSheetsPlugin,
+		SetRangeValuesMutation,
+		SetFrozenCommand,
+		SetSelectionsOperation,
 	}),
 );
 const sheets_ui_plugin = import("@univerjs/sheets-ui").then(
@@ -81,11 +81,14 @@ const DocsUIEnUS = import(
 const NUMBER_CELL_TYPE: typeof CellValueType.NUMBER = 2;
 const UNIVER_SHEET_TYPE: typeof UniverInstanceType.UNIVER_SHEET = 2;
 
-function generateWorkSheet(dataArray: any[], z: Zod): Partial<IWorksheetData> {
+async function generateWorkSheet(
+	dataArray: any[],
+	props: Props,
+): Promise<Partial<IWorksheetData>> {
 	const cellData: IObjectMatrixPrimitiveType<ICellData> = {};
 	let rowCount = 1000;
 	let columnCount = 26;
-	const schema = DataArraySchema(z);
+	const schema = DataArraySchema(await zod);
 
 	for (const elem of dataArray) {
 		const [colIdx, rowIdx, value, ...props] = schema.parse(elem);
@@ -104,7 +107,12 @@ function generateWorkSheet(dataArray: any[], z: Zod): Partial<IWorksheetData> {
 	return {
 		id: "sqlpage",
 		name: "SQLPage Data",
-		rowHeader: { width: 2 },
+		freeze: {
+			startRow: props.freeze_y,
+			startColumn: props.freeze_x,
+			xSplit: props.freeze_x,
+			ySplit: props.freeze_y,
+		},
 		rowCount,
 		columnCount,
 		cellData,
@@ -204,40 +212,20 @@ function cellFromProps(props: CellProps[]) {
 	return s;
 }
 
-async function setFrozenCells(
-	univerAPI: FUniver,
-	activeSheet: Worksheet,
-	freeze_x: number,
-	freeze_y: number,
-) {
-	if (!freeze_x && !freeze_y) return;
-	const { SetFrozenCommand } = await univer_sheets;
-	const params: ISetFrozenMutationParams = {
-		unitId: activeSheet.getUnitId(),
-		subUnitId: activeSheet.getSheetId(),
-		startRow: freeze_y,
-		startColumn: freeze_x,
-		xSplit: freeze_x,
-		ySplit: freeze_y,
-	};
-	univerAPI.executeCommand(SetFrozenCommand.id, params);
-}
-
 async function renderSpreadsheet(
 	container: HTMLElement,
 	props: Props,
 	data: any[],
 ) {
-	const { update_link, freeze_x, freeze_y } = props;
 	const modal = container.querySelector(".modal");
 	if (!(modal instanceof HTMLElement)) throw new Error("modal not found");
 	const errorModal = setupErrorModal(modal);
 
-	const worksheet = generateWorkSheet(data, await zod);
+	const worksheet = await generateWorkSheet(data, props);
 
 	const univer = await setupUniver(container);
 
-	const workbook: Workbook = univer.createUnit(UNIVER_SHEET_TYPE, {
+	univer.createUnit(UNIVER_SHEET_TYPE, {
 		sheetOrder: ["sqlpage"],
 		name: "sqlpage",
 		appVersion: "0.2.14",
@@ -246,14 +234,12 @@ async function renderSpreadsheet(
 		},
 	});
 
-	const activeSheet = workbook.getActiveSheet();
-
 	const { FUniver } = await facade;
 
 	const univerAPI = FUniver.newAPI(univer);
-	setFrozenCells(univerAPI, activeSheet, freeze_x, freeze_y);
 
 	const { SetRangeValuesMutation } = await univer_sheets;
+	const { update_link } = props;
 	univerAPI.onCommandExecuted(({ id, params }) => {
 		// To debug:
 		console.log(id, params);
