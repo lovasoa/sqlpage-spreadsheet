@@ -5,7 +5,6 @@ import type {
 	IObjectMatrixPrimitiveType,
 	IStyleData,
 	IWorksheetData,
-	Univer,
 	UniverInstanceType,
 	Workbook,
 	Worksheet,
