@@ -11,8 +11,8 @@ import type {
 } from "@univerjs/core";
 import type { FUniver } from "@univerjs/facade";
 import type {
+	ISetFrozenMutationParams,
 	ISetRangeValuesMutationParams,
-	ISetFrozenMutationParams
 } from "@univerjs/sheets";
 
 import "@univerjs/design/lib/index.css";
@@ -34,8 +34,11 @@ const ui_plugin = import("@univerjs/ui").then(
 	({ UniverUIPlugin }) => UniverUIPlugin,
 );
 const univer_sheets = import("@univerjs/sheets").then(
-	({ UniverSheetsPlugin, SetRangeValuesMutation, SetFrozenCommand
-	}) => ({ UniverSheetsPlugin, SetRangeValuesMutation, SetFrozenCommand }),
+	({ UniverSheetsPlugin, SetRangeValuesMutation, SetFrozenCommand }) => ({
+		UniverSheetsPlugin,
+		SetRangeValuesMutation,
+		SetFrozenCommand,
+	}),
 );
 const sheets_ui_plugin = import("@univerjs/sheets-ui").then(
 	({ UniverSheetsUIPlugin }) => UniverSheetsUIPlugin,
@@ -252,7 +255,7 @@ async function renderSpreadsheet(
 
 	const { SetRangeValuesMutation } = await univer_sheets;
 	univerAPI.onCommandExecuted(({ id, params }) => {
-		// To debug: 
+		// To debug:
 		console.log(id, params);
 		if (update_link && id === SetRangeValuesMutation.id) {
 			handleSetRangeValues(
