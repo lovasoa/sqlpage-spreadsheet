@@ -1,11 +1,15 @@
-import type {
-	CellValue,
-	CellValueType,
-	ICellData,
-	IObjectMatrixPrimitiveType,
-	IStyleData,
-	IWorksheetData,
-	UniverInstanceType,
+import {
+	type CellValue,
+	type CellValueType,
+	HorizontalAlign,
+	type ICellData,
+	type IObjectMatrixPrimitiveType,
+	type IStyleData,
+	type IWorksheetData,
+	TextDirection,
+	type UniverInstanceType,
+	VerticalAlign,
+	WrapStrategy,
 } from "@univerjs/core";
 import type { ISetRangeValuesMutationParams } from "@univerjs/sheets";
 
@@ -85,6 +89,27 @@ async function generateWorkSheet(
 	dataArray: any[],
 	props: Props,
 ): Promise<Partial<IWorksheetData>> {
+	const { cellData, rowCount, columnCount } = await buildCellData(dataArray);
+
+	return {
+		id: "sqlpage",
+		name: props.sheet_name,
+		defaultColumnWidth: props.column_width,
+		defaultRowHeight: props.row_height,
+		showGridlines: +props.show_grid,
+		freeze: {
+			startRow: props.freeze_y,
+			startColumn: props.freeze_x,
+			xSplit: props.freeze_x,
+			ySplit: props.freeze_y,
+		},
+		rowCount,
+		columnCount,
+		cellData,
+	};
+}
+
+async function buildCellData(dataArray: any[]) {
 	const cellData: IObjectMatrixPrimitiveType<ICellData> = {};
 	let rowCount = 1000;
 	let columnCount = 26;
@@ -104,22 +129,7 @@ async function generateWorkSheet(
 		columnCount = Math.max(columnCount, colIdx);
 	}
 
-	return {
-		id: "sqlpage",
-		name: props.sheet_name,
-		defaultColumnWidth: props.column_width,
-		defaultRowHeight: props.row_height,
-		showGridlines: +props.show_grid,
-		freeze: {
-			startRow: props.freeze_y,
-			startColumn: props.freeze_x,
-			xSplit: props.freeze_x,
-			ySplit: props.freeze_y,
-		},
-		rowCount,
-		columnCount,
-		cellData,
-	};
+	return { cellData, rowCount, columnCount };
 }
 
 async function setupUniver(container: HTMLElement) {
@@ -205,12 +215,29 @@ function cellFromProps(props: CellProps[]) {
 			const color = props[++i].toString();
 			const rgb = CSS_VARS.getPropertyValue(`--tblr-${color}`) || color;
 			s.bg = { rgb };
-		} else if (n === 4) s.ht = 2;
-		else if (n === 5) s.ht = 3;
-		else if (n === 6) {
+		} else if (n === 4) s.ht = HorizontalAlign.CENTER;
+		else if (n === 5) s.ht = HorizontalAlign.RIGHT;
+		else if (n === 6) s.ht = HorizontalAlign.JUSTIFIED;
+		else if (n === 7) s.ht = HorizontalAlign.DISTRIBUTED;
+		else if (n === 8) {
 			const pattern = props[++i].toString();
 			s.n = { pattern };
-		} else if (n === 7) s.id = props[++i].toString();
+		} else if (n === 9) s.id = props[++i].toString();
+		else if (n === 10) s.ff = props[++i].toString();
+		else if (n === 11) s.fs = Number(props[++i]);
+		else if (n === 12) s.ul = { s: 1 };
+		else if (n === 13) s.st = { s: 1 };
+		else if (n === 14) {
+			const color = props[++i].toString();
+			const rgb = CSS_VARS.getPropertyValue(`--tblr-${color}`) || color;
+			s.cl = { rgb };
+		} else if (n === 15) s.vt = VerticalAlign.TOP;
+		else if (n === 16) s.vt = VerticalAlign.MIDDLE;
+		else if (n === 17) s.vt = VerticalAlign.BOTTOM;
+		else if (n === 18) s.tb = WrapStrategy.OVERFLOW;
+		else if (n === 19) s.tb = WrapStrategy.CLIP;
+		else if (n === 20) s.tb = WrapStrategy.WRAP;
+		else if (n === 21) s.td = TextDirection.RIGHT_TO_LEFT;
 	}
 	return s;
 }

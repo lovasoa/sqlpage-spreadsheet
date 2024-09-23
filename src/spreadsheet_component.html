@@ -15,10 +15,24 @@ data-cells="
     {{~#if bold~}} ,1 {{~/if~}}
     {{~#if italic~}} ,2 {{~/if~}}
     {{~#if color~}} ,3,{{stringify color}} {{~/if~}}
-    {{~#if center~}} ,4 {{~/if~}}
-    {{~#if right~}} ,5 {{~/if~}}
-    {{~#if number_format~}} ,6,{{stringify number_format}} {{~/if~}}
-    {{~#if id~}} ,7,{{stringify id}} {{~/if~}}
+    {{~#if text_align_center~}} ,4 {{~/if~}}
+    {{~#if text_align_right~}} ,5 {{~/if~}}
+    {{~#if text_align_justified~}} ,6 {{~/if~}}
+    {{~#if text_align_distributed~}} ,7 {{~/if~}}
+    {{~#if number_format~}} ,8,{{stringify number_format}} {{~/if~}}
+    {{~#if id~}} ,9,{{stringify id}} {{~/if~}}
+    {{~#if font_family~}} ,10,{{stringify font_family}} {{~/if~}}
+    {{~#if font_size~}} ,11,{{stringify font_size}} {{~/if~}}
+    {{~#if underline~}} ,12 {{~/if~}}
+    {{~#if strikethrough~}} ,13 {{~/if~}}
+    {{~#if text_color~}} ,14,{{stringify text_color}} {{~/if~}}
+    {{~#if vertical_align_top~}} ,15 {{~/if~}}
+    {{~#if vertical_align_middle~}} ,16 {{~/if~}}
+    {{~#if vertical_align_bottom~}} ,17 {{~/if~}}
+    {{~#if wrap_strategy_overflow~}} ,18 {{~/if~}}
+    {{~#if wrap_strategy_clip~}} ,19 {{~/if~}}
+    {{~#if wrap_strategy_wrap~}} ,20 {{~/if~}}
+    {{~#if text_direction_rtl~}} ,21 {{~/if~}}
   ]
 {{/each_row}}
 ]

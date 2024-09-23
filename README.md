@@ -34,7 +34,21 @@ It has the ability to edit cell data by posting their contents to another SQLpag
 - **bold** If present, the cell text is bold
 - **italic** If present, the cell text is italic
 - **color** cell background color. Can be a [SQLPage color name](https://sql.datapage.app/colors.sql) or a hexadecimal color code like `#80cbc4`.
-- **center** If present, the cell text is centered
-- **right** If present, the cell text is right-aligned
-- **number\_format** format the number according to the specified number format. Uses [excel number format codes](https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68).
-- **id** If present, the cell has this unique identifier that will be passed to the update\_link sql file.
+- **text_align_center** If present, the cell text is centered
+- **text_align_right** If present, the cell text is right-aligned
+- **text_align_justified** If present, the cell text is justified
+- **text_align_distributed** If present, the cell text is distributed
+- **number_format** format the number according to the specified number format. Uses [excel number format codes](https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68).
+- **id** If present, the cell has this unique identifier that will be passed to the update_link sql file.
+- **font_family** The font family for the cell text
+- **font_size** The font size for the cell text (in points)
+- **underline** If present, the cell text is underlined
+- **strikethrough** If present, the cell text has a strikethrough
+- **text_color** The color of the cell text. Can be a [SQLPage color name](https://sql.datapage.app/colors.sql) or a hexadecimal color code.
+- **vertical_align_top** If present, the cell content is aligned to the top
+- **vertical_align_middle** If present, the cell content is aligned to the middle
+- **vertical_align_bottom** If present, the cell content is aligned to the bottom
+- **wrap_strategy_overflow** If present, text overflows to the next cell if empty
+- **wrap_strategy_clip** If present, text is clipped if it exceeds cell width
+- **wrap_strategy_wrap** If present, text wraps within the cell
+- **text_direction_rtl** If present, text direction is right-to-left
