@@ -31,6 +31,7 @@ It has the ability to edit cell data by posting their contents to another SQLpag
 - **x** the value of the x-axis (horizontal cell number)
 - **y** the value of the y-axis (vertical cell number)
 - **value** the value of the cell
+- **id** the id of the cell (will be passed as `:id` to the update_link sql file)
 - **bold** If present, the cell text is bold
 - **italic** If present, the cell text is italic
 - **color** cell background color. Can be a [SQLPage color name](https://sql.datapage.app/colors.sql) or a hexadecimal color code like `#80cbc4`.
@@ -39,7 +40,6 @@ It has the ability to edit cell data by posting their contents to another SQLpag
 - **text_align_justified** If present, the cell text is justified
 - **text_align_distributed** If present, the cell text is distributed
 - **number_format** format the number according to the specified number format. Uses [excel number format codes](https://support.microsoft.com/en-us/office/number-format-codes-5026bbd6-04bc-48cd-bf33-80f18b4eae68).
-- **id** If present, the cell has this unique identifier that will be passed to the update_link sql file.
 - **font_family** The font family for the cell text
 - **font_size** The font size for the cell text (in points)
 - **underline** If present, the cell text is underlined
