@@ -106,7 +106,9 @@ async function generateWorkSheet(
 
 	return {
 		id: "sqlpage",
-		name: "SQLPage Data",
+		name: props.sheet_name,
+		defaultColumnWidth: props.column_width,
+		defaultRowHeight: props.row_height,
 		freeze: {
 			startRow: props.freeze_y,
 			startColumn: props.freeze_x,
@@ -283,8 +285,11 @@ type Zod = typeof import("zod");
 const PropsSchema = (z: Zod) =>
 	z.object({
 		update_link: z.string().optional(),
+		sheet_name: z.string().default("SQLPage Data"),
 		freeze_x: z.number().int().nonnegative().default(0),
 		freeze_y: z.number().int().nonnegative().default(0),
+		column_width: z.number().int().nonnegative().optional(),
+		row_height: z.number().int().nonnegative().optional(),
 	});
 
 type Props = Zod.infer<ReturnType<typeof PropsSchema>>;

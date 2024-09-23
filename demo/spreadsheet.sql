@@ -4,6 +4,9 @@ select 'title' as component, 'Here is my spreadsheet' as contents;
 
 select 'spreadsheet' as component,
   'spreadsheet_update.sql' as update_link,
+  'My TODO Spreadsheet' as sheet_name,
+  100 as column_width,
+  25 as row_height,
   1 as freeze_y;
 
 select 

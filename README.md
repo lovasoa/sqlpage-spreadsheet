@@ -21,6 +21,9 @@ It has the ability to edit cell data by posting their contents to another SQLpag
   - `:id` if an id was assigned to the cell from the row-level properties.
 - **freeze\_x**: the number of columns to freeze on the left side
 - **freeze\_y**: the number of rows to freeze on the top side
+- **sheet\_name**: the name of the worksheet (displayed in the bottom left corner, as the tab name)
+- **column\_width**: the default width of the columns (in px)
+- **row\_height**: the default height of the rows (in px)
 
 ### Row-Level properties
 
