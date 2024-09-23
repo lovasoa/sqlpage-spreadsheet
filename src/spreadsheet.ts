@@ -12,7 +12,6 @@ import type {
 import type { FUniver } from "@univerjs/facade";
 import type {
 	ISetRangeValuesMutationParams,
-	SetRangeValuesMutation,
 } from "@univerjs/sheets";
 
 import "@univerjs/design/lib/index.css";
@@ -33,8 +32,8 @@ const render_engine = import("@univerjs/engine-render").then(
 const ui_plugin = import("@univerjs/ui").then(
 	({ UniverUIPlugin }) => UniverUIPlugin,
 );
-const sheets_plugin = import("@univerjs/sheets").then(
-	({ UniverSheetsPlugin }) => UniverSheetsPlugin,
+const univer_sheets = import("@univerjs/sheets").then(
+	({ UniverSheetsPlugin, SetRangeValuesMutation }) => ({ UniverSheetsPlugin, SetRangeValuesMutation }),
 );
 const sheets_ui_plugin = import("@univerjs/sheets-ui").then(
 	({ UniverSheetsUIPlugin }) => UniverSheetsUIPlugin,
@@ -130,7 +129,7 @@ async function setupUniver(container: HTMLElement) {
 	const uiPlugin = await ui_plugin;
 	container.className = "sqlpage_spreadsheet";
 	univer.registerPlugin(uiPlugin, { container });
-	univer.registerPlugin(await sheets_plugin);
+	univer.registerPlugin((await univer_sheets).UniverSheetsPlugin);
 	univer.registerPlugin(await sheets_ui_plugin);
 	univer.registerPlugin(await docs_plugin);
 	univer.registerPlugin(await docs_ui_plugin);
@@ -152,7 +151,7 @@ function setupErrorModal(resp_modal: HTMLElement) {
 }
 
 async function handleUpdate(
-	update_link: Props["update_link"],
+	update_link: string,
 	x: number,
 	y: number,
 	value: CellValue | null | undefined,
@@ -247,11 +246,11 @@ async function renderSpreadsheet(
 	const univerAPI = FUniver.newAPI(univer);
 	setFrozenCells(univerAPI, activeSheet, freeze_x, freeze_y);
 
+	const { SetRangeValuesMutation } = await univer_sheets;
+
 	univerAPI.onCommandExecuted(({ id, params }) => {
 		// To debug: console.log(id, params);
-		const set_range: typeof SetRangeValuesMutation.id =
-			"sheet.mutation.set-range-values";
-		if (id === set_range) {
+		if (update_link && id === SetRangeValuesMutation.id) {
 			handleSetRangeValues(
 				params as ISetRangeValuesMutationParams,
 				update_link,
@@ -263,7 +262,7 @@ async function renderSpreadsheet(
 
 function handleSetRangeValues(
 	params: ISetRangeValuesMutationParams,
-	update_link: Props["update_link"],
+	update_link: string,
 	errorModal: ReturnType<typeof setupErrorModal>,
 ) {
 	const { cellValue } = params;
