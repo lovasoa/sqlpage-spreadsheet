@@ -7,7 +7,8 @@ select 'spreadsheet' as component,
   'My TODO Spreadsheet' as sheet_name,
   100 as column_width,
   25 as row_height,
-  1 as freeze_y;
+  1 as freeze_y,
+  false as show_grid;
 
 select 
   row_number() over (order by created_at) as x,

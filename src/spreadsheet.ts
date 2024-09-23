@@ -109,6 +109,7 @@ async function generateWorkSheet(
 		name: props.sheet_name,
 		defaultColumnWidth: props.column_width,
 		defaultRowHeight: props.row_height,
+		showGridlines: +props.show_grid,
 		freeze: {
 			startRow: props.freeze_y,
 			startColumn: props.freeze_x,
@@ -290,6 +291,7 @@ const PropsSchema = (z: Zod) =>
 		freeze_y: z.number().int().nonnegative().default(0),
 		column_width: z.number().int().nonnegative().optional(),
 		row_height: z.number().int().nonnegative().optional(),
+		show_grid: z.boolean().default(true),
 	});
 
 type Props = Zod.infer<ReturnType<typeof PropsSchema>>;

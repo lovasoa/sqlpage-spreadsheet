@@ -24,6 +24,7 @@ It has the ability to edit cell data by posting their contents to another SQLpag
 - **sheet\_name**: the name of the worksheet (displayed in the bottom left corner, as the tab name)
 - **column\_width**: the default width of the columns (in px)
 - **row\_height**: the default height of the rows (in px)
+- **show\_grid**: if the gridlines are shown (default: `true`)
 
 ### Row-Level properties
 
