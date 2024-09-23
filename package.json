@@ -6,7 +6,7 @@
 	"browserslist": "> 3%, last 2 versions, not dead",
 	"scripts": {
 		"build": "parcel build --no-optimize --public-url /dist/",
-		"dev": "parcel watch --public-url /dist/",
+		"dev": "parcel watch --public-url /dist/ & (cd demo && ./sqlpage.bin)",
 		"lint": "biome check",
 		"typecheck": "tsc --noEmit",
 		"fix": "biome check --fix --unsafe",
