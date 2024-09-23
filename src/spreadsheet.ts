@@ -12,6 +12,7 @@ import type {
 import type { FUniver } from "@univerjs/facade";
 import type {
 	ISetRangeValuesMutationParams,
+	ISetFrozenMutationParams
 } from "@univerjs/sheets";
 
 import "@univerjs/design/lib/index.css";
@@ -33,7 +34,8 @@ const ui_plugin = import("@univerjs/ui").then(
 	({ UniverUIPlugin }) => UniverUIPlugin,
 );
 const univer_sheets = import("@univerjs/sheets").then(
-	({ UniverSheetsPlugin, SetRangeValuesMutation }) => ({ UniverSheetsPlugin, SetRangeValuesMutation }),
+	({ UniverSheetsPlugin, SetRangeValuesMutation, SetFrozenCommand
+	}) => ({ UniverSheetsPlugin, SetRangeValuesMutation, SetFrozenCommand }),
 );
 const sheets_ui_plugin = import("@univerjs/sheets-ui").then(
 	({ UniverSheetsUIPlugin }) => UniverSheetsUIPlugin,
@@ -99,6 +101,7 @@ function generateWorkSheet(dataArray: any[], z: Zod): Partial<IWorksheetData> {
 	return {
 		id: "sqlpage",
 		name: "SQLPage Data",
+		rowHeader: { width: 2 },
 		rowCount,
 		columnCount,
 		cellData,
@@ -198,22 +201,23 @@ function cellFromProps(props: CellProps[]) {
 	return s;
 }
 
-function setFrozenCells(
+async function setFrozenCells(
 	univerAPI: FUniver,
 	activeSheet: Worksheet,
 	freeze_x: number,
 	freeze_y: number,
 ) {
-	if (freeze_x || freeze_y) {
-		univerAPI.executeCommand("sheet.mutation.set-frozen", {
-			unitId: activeSheet.getUnitId(),
-			subUnitId: activeSheet.getSheetId(),
-			startRow: freeze_y,
-			startColumn: freeze_x,
-			xSplit: freeze_x,
-			ySplit: freeze_y,
-		});
-	}
+	if (!freeze_x && !freeze_y) return;
+	const { SetFrozenCommand } = await univer_sheets;
+	const params: ISetFrozenMutationParams = {
+		unitId: activeSheet.getUnitId(),
+		subUnitId: activeSheet.getSheetId(),
+		startRow: freeze_y,
+		startColumn: freeze_x,
+		xSplit: freeze_x,
+		ySplit: freeze_y,
+	};
+	univerAPI.executeCommand(SetFrozenCommand.id, params);
 }
 
 async function renderSpreadsheet(
@@ -247,9 +251,9 @@ async function renderSpreadsheet(
 	setFrozenCells(univerAPI, activeSheet, freeze_x, freeze_y);
 
 	const { SetRangeValuesMutation } = await univer_sheets;
-
 	univerAPI.onCommandExecuted(({ id, params }) => {
-		// To debug: console.log(id, params);
+		// To debug: 
+		console.log(id, params);
 		if (update_link && id === SetRangeValuesMutation.id) {
 			handleSetRangeValues(
 				params as ISetRangeValuesMutationParams,
