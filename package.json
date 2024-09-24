@@ -5,7 +5,8 @@
 	"source": "./src/spreadsheet_component.html",
 	"browserslist": "> 3%, last 2 versions, not dead",
 	"scripts": {
-		"build": "parcel build --no-optimize --public-url /dist/",
+		"build": "parcel build --no-optimize --public-url /dist/ && ./add_csp_nonce.sh",
+		"build-optimized": "parcel build --public-url /dist/ && ./add_csp_nonce.sh",
 		"dev": "parcel watch --public-url /dist/ & (cd demo && ./sqlpage.bin)",
 		"lint": "biome check",
 		"typecheck": "tsc --noEmit",
