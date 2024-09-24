@@ -111,5 +111,5 @@ jobs:
           mkdir -p ${{ steps.get_version.outputs.VERSION }}
           cp -r dist ${{ steps.get_version.outputs.VERSION }}/
           git add ${{ steps.get_version.outputs.VERSION }}
-          git commit -m "Deploy version ${{ steps.get_version.outputs.VERSION }} to GitHub Pages"
+          git commit -m "Deploy version ${{ steps.get_version.outputs.VERSION }} to GitHub Pages" || echo "No changes to commit"
           git push origin gh-pages
